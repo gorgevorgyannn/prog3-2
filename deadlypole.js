@@ -50,7 +50,7 @@ class DeadlyPole {
         }
     }
 
-    
+
 
     eat() {
         var emptyCells = this.chooseCell(2);
@@ -71,7 +71,7 @@ class DeadlyPole {
             }
 
         } else {
-         
+
         }
     }
 }
