@@ -1,0 +1,152 @@
+var express = require("express");
+const DeadlyPole = require("./Modules/deadlypole");
+const LivingCreature = require("./Modules/main");
+
+var app = express();
+
+var server = require('http').Server(app);
+
+var io = require('socket.io')(server);
+
+app.use(express.static("../client"));
+
+app.get("/", function (req, res) {
+    res.redirect("index.html");
+
+});
+
+server.listen(3000, function () {
+    console.log("App is running on port 3000");
+
+});
+
+grassArr = []
+grassEaterArr = []
+predatorArr = []
+GrassEaterCreatureArr = []
+PredatorCreatureArr = []
+DeadlyPoleArr = []
+
+LivingCreature = require("./Modules/main")
+Grass = require("./Modules/main")
+GrassEater= require("./Modules/main")
+Predator = require("./Modules/main")
+GrassEaterCreature = require("./Modules/main")
+PredatorCreature = require("./Modules/main")
+DeadlyPole = require("./Modules/main")
+
+var flag = false
+io.on("connection", function (socket){
+    if (flag) {
+        setInterval(drawForBackend, 5000)
+        flag = true
+    }
+    })
+
+function generator(matLen, gr, grEat, pred, predcr, dp, gecr) {
+    let matrix = [];
+    for (let i = 0; i < matLen; i++) {
+        matrix[i] = [];
+        for (let j = 0; j < matLen; j++) {
+            matrix[i][j] = 0;
+        }
+    }
+    for (let i = 0; i < gr; i++) {
+        let x = Math.floor(Math.random() * matLen);
+        let y = Math.floor(Math.random() * matLen);
+        if (matrix[x][y] == 0) {
+            matrix[x][y] = 1;
+        }
+    }
+    for (let i = 0; i < grEat; i++) {
+        let x = Math.floor(Math.random() * matLen);
+        let y = Math.floor(Math.random() * matLen);
+        if (matrix[x][y] == 0) {
+            matrix[x][y] = 2;
+        }
+    }
+    for (let i = 0; i < pred; i++) {
+        let x = Math.floor(Math.random() * matLen);
+        let y = Math.floor(Math.random() * matLen);
+        if (matrix[x][y] == 0) {
+            matrix[x][y] = 3;
+        }
+    }
+    for (let i = 0; i < predcr; i++) {
+        let x = Math.floor(Math.random() * matLen);
+        let y = Math.floor(Math.random() * matLen);
+        if (matrix[x][y] == 0) {
+            matrix[x][y] = 4;
+        }
+    }
+    for (let i = 0; i < dp; i++) {
+        let x = Math.floor(Math.random() * matLen);
+        let y = Math.floor(Math.random() * matLen);
+        if (matrix[x][y] == 0) {
+            matrix[x][y] = 5;
+        }
+    }
+    for (let i = 0; i < gecr; i++) {
+        let x = Math.floor(Math.random() * matLen);
+        let y = Math.floor(Math.random() * matLen);
+        if (matrix[x][y] == 0) {
+            matrix[x][y] = 6;
+        }
+    }
+
+    return matrix;
+
+}
+
+
+matrix = generator(35, 140, 80, 80, 10, 10, 10);
+
+function drawForBackend() {
+    for (var i in grassArr){
+        grassArr[i].mul()
+    }
+    for (var i in grassEaterArr){
+        grassArr[i].mul()
+    }
+    for (var i in predatorArr){
+        predatorArr[i].mul()
+    }
+    for (var i in GrassEaterCreatureArr){
+        GrassEaterCreatureArr[i].mul()
+    }
+    for (var i in PredatorCreatureArr){
+        PredatorCreatureArr[i].mul()
+    }
+    for (var i in DeadlyPoleArr){
+        DeadlyPoleArr[i].mul()
+    }
+}
+
+let sendData = {
+    matrix: matrix
+}
+statistics = {
+    Grasses: grassArr.length,
+    GrassEaters: grassEaterArr.length,
+    Predators: predatorArr.length,
+    GrassEaterCreatures: grassEaterCreatures.length,
+    PredatorCreatures: PredatorCreatureArr.length,
+    DeadlyPoles: DeadlyPoleArr.length
+}
+
+//call drawForBackend function with setInterval()
+io.on("connection", function (socket) {
+
+    //…
+});
+function drawForBackend() {
+    for (var i in grassArr) {
+        //.. 
+    }
+    for (var i in predatorArr) {
+        let sendData = {
+            matrix: matrix
+        }
+        io.sockets.emit("matrix", sendData)
+    }
+}
