@@ -1,3 +1,33 @@
+multForGrass = 8
+socket = io();
+var side = 20, m = 40, n = 40;
+var grassColor = "#009424"
+function setup() {
+    frameRate(40)
+    createCanvas(n * side, m * side);
+    background('#e8e8e8')
+    button1 = document.getElementById('summer')
+    button2 = document.getElementById('winter')
+    button1 = addEventListener("click", onColorChange)
+    button2 = addEventListener("click", onColorChange)
+}
+
+function onColorChange() {
+    if (event.target.id == "summer") {
+        grassColor == "#12D804"
+        multForGrass = 5
+    }
+    else if (event.target.id == "winter") {
+        grassColor = "white"
+        multForGrass = 10
+    }
+    let data = {
+        multForGrass: multForGrass
+    }
+    socket.on("matrix", drawMatrix);
+    socket.emit("afterClick", data)
+}
+
 function generator(matLen, gr, grEat, pred, predcr, dp, gecr) {
     let matrix = [];
     for (let i = 0; i < matLen; i++) {
@@ -53,57 +83,19 @@ function generator(matLen, gr, grEat, pred, predcr, dp, gecr) {
 
 }
 
-let side = 20;
+grassArr = []
+grassEaterArr = []
+predatorArr = []
+GrassEaterCreatureArr = []
+PredatorCreatureArr = []
+DeadlyPoleArr = []
 
-let matrix = generator(35, 140, 80, 80, 10, 10, 10);
-
-let grassArr = []
-let grassEaterArr = []
-let PredatorArr = []
-let PredatorCreatureArr = []
-let DeadlyPoleArr = []
-let GrassEaterCreatureArr = []
-
-function setup() {
-    createCanvas(matrix[0].length * side, matrix.length * side);
-    background('#acacac');
-    frameRate(3)
+function drawMatrix(data) {
+    matrix = data.matrix;
     for (let y = 0; y < matrix.length; y++) {
         for (let x = 0; x < matrix[y].length; x++) {
             if (matrix[y][x] == 1) {
-                let gr = new Grass(x, y)
-                grassArr.push(gr)
-            } else if (matrix[y][x] == 2) {
-                let grE = new GrassEater(x, y)
-                grassEaterArr.push(grE)
-            }
-            else if (matrix[y][x] == 3) {
-                let pred = new Predator(x, y)
-                PredatorArr.push(pred)
-            }
-            else if (matrix[y][x] == 4) {
-                let predsp = new PredatorCreature(x, y)
-                PredatorSpawnArr.push(predsp)
-            } else if (matrix[y][x] == 5) {
-                let dp = new DeadlyPole(x, y)
-                DeadlyPoleArr.push(dp)
-            } else if (matrix[y][x] == 5) {
-                let dp = new DeadlyPole(x, y)
-                DeadlyPoleArr.push(dp)
-            }
-            else if (matrix[y][x] == 6) {
-                let ges = new GrassEaterCreature(x, y)
-                GrassEaterSpawnArr.push(ges)
-            }
-        }
-    }
-}
-
-function draw() {
-    for (let y = 0; y < matrix.length; y++) {
-        for (let x = 0; x < matrix[y].length; x++) {
-            if (matrix[y][x] == 1) {
-                fill('green')
+                fill(grassColor)
             } else if (matrix[y][x] == 0) {
                 fill('#acacac')
             } else if (matrix[y][x] == 2) {
@@ -119,46 +111,38 @@ function draw() {
             }
             rect(x * side, y * side, side, side)
         }
+} 
+
+
+        for (let i in grassArr) {
+            grassArr[i].mul()
+        }
+        for (let i in grassEaterArr) {
+            grassEaterArr[i].mul()
+            grassEaterArr[i].eat()
+        }
+        for (let i in predatorArr) {
+            predatorArr[i].mul()
+            predatorArr[i].eat()
+        }
+        for (let i in PredatorCreatureArr) {
+            PredatorCreatureArr[i].move()
+            if (predatorArr.length <= 15) {
+                PredatorCreatureArr[i].mul()
+            }
+        }
+        for (let i in DeadlyPoleArr) {
+            DeadlyPoleArr[i].eat()
+        }
+        for (let i in GrassEaterCreatureArr) {
+            GrassEaterCreatureArr[i].move()
+            if (grassEaterArr.length <= 15) {
+                GrassEaterCreatureArr[i].mul()
+            }
+        }
     }
 
-    for (let i in grassArr) {
-        grassArr[i].mul()
-    }
-    for (let i in grassEaterArr) {
-        grassEaterArr[i].mul()
-        grassEaterArr[i].eat()
-    }
-    for (let i in PredatorArr) {
-        PredatorArr[i].mul()
-        PredatorArr[i].eat()
-    }
-    for (let i in PredatorCreatureArr) {
-        PredatorSpawnArr[i].move()
-        if (PredatorArr.length <= 15) {
-            PredatorSpawnArr[i].mul()
-        }
-    }
-    for (let i in DeadlyPoleArr) {
-        DeadlyPoleArr[i].eat()
-    }
-    for (let i in GrassEaterCreatureArr) {
-        GrassEaterSpawnArr[i].move()
-        if (grassEaterArr.length <= 15) {
-            GrassEaterSpawnArr[i].mul()
-        }
-    }
-}
-socket = io();
-var side = 20, m = 35, n = 35;
-function setup() {
-    frameRate(40);
-    createCanvas(n * side, m * side);
-    background('#e8e8e8');
-}
-function drawMatrix(data) {
-    matrix = data.matrix;
-    for (var y = 0; y < matrix.length; y++) {
-        // . . .
-    }
-}
+   
+
+
 socket.on("matrix", drawMatrix);

@@ -1,4 +1,4 @@
-const LivingCreature = require("./livingCreature");
+const LivingCreature = require("./main");
 let random = require("./random");
 module.exports = class Grass extends LivingCreature {
     constructor(x, y, index) {
@@ -9,12 +9,12 @@ module.exports = class Grass extends LivingCreature {
     }
 
 
-    mul() {
+    mul(multForGrass) {
         this.multiply++;
         var emptyCells = this.chooseCell(0);
         var newCell = random(emptyCells);
 
-        if (newCell && this.multiply >= 8) {
+        if (newCell && this.multiply >= multForGrass) {
             var newX = newCell[0];
             var newY = newCell[1];
             matrix[newY][newX] = 1;

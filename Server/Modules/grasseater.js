@@ -1,10 +1,11 @@
-const LivingCreature = require("./livingCreature");
+const LivingCreature = require("./main");
 let random = require("./random");
 module.exports = class GrassEater extends LivingCreature{
-    constructor(x, y, index) {
+    constructor(x, y, index, isFemale) {
         super(x, y, index)
         this.multiply = 0
         this.energy = 8
+        this.isFemale = isFemale
     }
 
     getNewCoordinates() {
@@ -34,7 +35,7 @@ module.exports = class GrassEater extends LivingCreature{
             var newY = newCell[1];
             matrix[newY][newX] = 2;
 
-            var newGr = new GrassEater(newX, newY, 2);
+            var newGr = new GrassEater(newX, newY, 2, !this.isFemale);
             grassEaterArr.push(newGr);
             this.multiply = 0;
         }
@@ -85,12 +86,15 @@ module.exports = class GrassEater extends LivingCreature{
         }
     }
     die() {
-        matrix[this.y][this.x] = 0
-        for (var i in grassEaterArr) {
+        if (this.energy <= 0 && this.isFemale) {
+           for (var i in grassEaterArr) {
             if (this.x == grassEaterArr[i].x && this.y == grassEaterArr[i].y) {
                 grassEaterArr.splice(i, 1);
-                break;
-            }
-        }
-    }
+                matrix[this.y][this.x] = 0 
+                break;      
+         }
+     }
+   } 
+
+}
 }

@@ -1,4 +1,4 @@
-const LivingCreature = require("./livingCreature");
+const LivingCreature = require("./main");
 let random = require("./random");
 module.exports = class GrassEaterCreature extends LivingCreature{
     constructor(x, y , index) {
